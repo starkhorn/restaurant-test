@@ -1,0 +1,54 @@
+{
+  "categories": [
+    {
+      "id": 1,
+      "name": "Appetizers",
+      "nameEn": "Appetizers",
+      "nameTh": "ของทานเล่น"
+    },
+    {
+      "id": 2,
+      "name": "Main Courses",
+      "nameEn": "Main Courses",
+      "nameTh": "อาหารจานหลัก"
+    },
+    {
+      "id": 3,
+      "name": "Drinks",
+      "nameEn": "Drinks",
+      "nameTh": "เครื่องดื่ม"
+    }
+  ],
+  "items": [
+    {
+      "id": 1,
+      "nameEn": "Spring Rolls",
+      "nameTh": "ปอเปี๊ยะทอด",
+      "description": "Crispy spring rolls with vegetables",
+      "price": 120,
+      "categoryId": 1,
+      "image": "/images/spring-rolls.jpg",
+      "status": "available"
+    },
+    {
+      "id": 2,
+      "nameEn": "Pad Thai",
+      "nameTh": "ผัดไทย",
+      "description": "Traditional Thai stir-fried noodles",
+      "price": 180,
+      "categoryId": 2,
+      "image": "/images/pad-thai.jpg",
+      "status": "available"
+    },
+    {
+      "id": 3,
+      "nameEn": "Thai Iced Tea",
+      "nameTh": "ชาเย็น",
+      "description": "Sweet and creamy Thai tea",
+      "price": 60,
+      "categoryId": 3,
+      "image": "/images/thai-tea.jpg",
+      "status": "available"
+    }
+  ]
+}

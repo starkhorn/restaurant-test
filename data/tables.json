@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "number": 1,
+    "qrCode": null,
+    "status": "available"
+  },
+  {
+    "id": 2,
+    "number": 2,
+    "qrCode": null,
+    "status": "available"
+  },
+  {
+    "id": 3,
+    "number": 3,
+    "qrCode": null,
+    "status": "available"
+  },
+  {
+    "id": 4,
+    "number": 4,
+    "qrCode": null,
+    "status": "available"
+  },
+  {
+    "id": 5,
+    "number": 5,
+    "qrCode": null,
+    "status": "available"
+  },
+  {
+    "id": 6,
+    "number": 6,
+    "qrCode": null,
+    "status": "available"
+  },
+  {
+    "id": 7,
+    "number": 7,
+    "qrCode": null,
+    "status": "available"
+  },
+  {
+    "id": 8,
+    "number": 8,
+    "qrCode": null,
+    "status": "available"
+  },
+  {
+    "id": 9,
+    "number": 9,
+    "qrCode": null,
+    "status": "available"
+  },
+  {
+    "id": 10,
+    "number": 10,
+    "qrCode": null,
+    "status": "available"
+  },
+  {
+    "id": 11,
+    "number": 11,
+    "qrCode": null,
+    "status": "available"
+  },
+  {
+    "id": 12,
+    "number": 12,
+    "qrCode": null,
+    "status": "available"
+  },
+  {
+    "id": 13,
+    "number": 13,
+    "qrCode": null,
+    "status": "available"
+  },
+  {
+    "id": 14,
+    "number": 14,
+    "qrCode": null,
+    "status": "available"
+  },
+  {
+    "id": 15,
+    "number": 15,
+    "qrCode": null,
+    "status": "available"
+  },
+  {
+    "id": 16,
+    "number": 16,
+    "qrCode": null,
+    "status": "available"
+  },
+  {
+    "id": 17,
+    "number": 17,
+    "qrCode": null,
+    "status": "available"
+  },
+  {
+    "id": 18,
+    "number": 18,
+    "qrCode": null,
+    "status": "available"
+  },
+  {
+    "id": 19,
+    "number": 19,
+    "qrCode": null,
+    "status": "available"
+  },
+  {
+    "id": 20,
+    "number": 20,
+    "qrCode": null,
+    "status": "available"
+  }
+]
