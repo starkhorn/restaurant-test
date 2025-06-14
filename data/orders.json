@@ -1,1 +1,21 @@
-[]
+[
+  {
+    "id": 1749923458881,
+    "tableNumber": 5,
+    "items": [
+      {
+        "id": 1,
+        "itemId": 1,
+        "name": "Spring Rolls",
+        "nameTh": "ปอเปี๊ยะทอด",
+        "price": 120,
+        "quantity": 2,
+        "specialRequests": "Extra sauce",
+        "status": "cooking"
+      }
+    ],
+    "status": "queued",
+    "timestamp": "2025-06-14T17:50:58.881Z",
+    "total": 240
+  }
+]
