@@ -110,3 +110,9 @@ data/*.json.backup
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Playwright test artifacts
+test-results/
+playwright-report/
+playwright/.cache/
+debug-*.png
