@@ -37,6 +37,11 @@
       "id": 1750094443609,
       "name": "Test Category",
       "nameEn": "Test Category"
+    },
+    {
+      "id": 1750094495123,
+      "name": "Test Category",
+      "nameEn": "Test Category"
     }
   ],
   "items": [
@@ -114,6 +119,17 @@
     },
     {
       "id": 1750094444411,
+      "status": "available"
+    },
+    {
+      "id": 1750094495116,
+      "nameEn": "Test Item",
+      "categoryId": 1,
+      "price": 100,
+      "status": "available"
+    },
+    {
+      "id": 1750094495969,
       "status": "available"
     }
   ]
