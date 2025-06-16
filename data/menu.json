@@ -17,19 +17,34 @@
       "name": "Drinks",
       "nameEn": "Drinks",
       "nameTh": "เครื่องดื่ม"
+    },
+    {
+      "id": 1750094342679,
+      "name": "Test Category",
+      "nameEn": "Test Category"
+    },
+    {
+      "id": 1750094350813,
+      "name": "Test Category",
+      "nameEn": "Test Category"
+    },
+    {
+      "id": 1750094368197,
+      "name": "Test Category",
+      "nameEn": "Test Category"
+    },
+    {
+      "id": 1750094443609,
+      "name": "Test Category",
+      "nameEn": "Test Category"
+    },
+    {
+      "id": 1750094495123,
+      "name": "Test Category",
+      "nameEn": "Test Category"
     }
   ],
   "items": [
-    {
-      "id": 1,
-      "nameEn": "Spring Rolls",
-      "nameTh": "ปอเปี๊ยะทอด",
-      "description": "Crispy spring rolls with vegetables",
-      "price": 120,
-      "categoryId": 1,
-      "image": "/images/spring-rolls.jpg",
-      "status": "available"
-    },
     {
       "id": 2,
       "nameEn": "Pad Thai",
@@ -48,6 +63,73 @@
       "price": 60,
       "categoryId": 3,
       "image": "/images/thai-tea.jpg",
+      "status": "available"
+    },
+    {
+      "id": 1750094240429,
+      "status": "available"
+    },
+    {
+      "id": 1750094254719,
+      "status": "available"
+    },
+    {
+      "id": 1750094285393,
+      "status": "available"
+    },
+    {
+      "id": 1750094342671,
+      "nameEn": "Test Item",
+      "categoryId": 1,
+      "price": 100,
+      "status": "available"
+    },
+    {
+      "id": 1750094343617,
+      "status": "available"
+    },
+    {
+      "id": 1750094350806,
+      "nameEn": "Test Item",
+      "categoryId": 1,
+      "price": 100,
+      "status": "available"
+    },
+    {
+      "id": 1750094351637,
+      "status": "available"
+    },
+    {
+      "id": 1750094368190,
+      "nameEn": "Test Item",
+      "categoryId": 1,
+      "price": 100,
+      "status": "available"
+    },
+    {
+      "id": 1750094369070,
+      "status": "available"
+    },
+    {
+      "id": 1750094443602,
+      "nameEn": "Test Item",
+      "categoryId": 1,
+      "price": 100,
+      "status": "available"
+    },
+    {
+      "id": 1750094444411,
+      "status": "available"
+    },
+    {
+      "id": 1750094495116,
+      "nameEn": "Test Item",
+      "categoryId": 1,
+      "price": 100,
+      "status": "available"
+    },
+    {
+      "id": 1750094495969,
       "status": "available"
     }
   ]

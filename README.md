@@ -158,6 +158,38 @@ npm install nodemon --save-dev
 npx nodemon server.js
 ```
 
+## 🧪 Testing
+
+This project includes comprehensive unit tests and code coverage reporting.
+
+### Quick Start
+```bash
+# Run all tests
+npm test
+
+# Run tests with coverage report
+npm run coverage
+
+# Run tests in watch mode (for development)
+npm run test:watch
+```
+
+### Test Coverage
+- **Statement Coverage**: 77.77%
+- **Branch Coverage**: 58.33% 
+- **Function Coverage**: 75.86%
+- **Line Coverage**: 77.56%
+
+### Test Structure
+- **Unit Tests**: Core function testing with mocks
+- **Integration Tests**: API endpoint testing with real HTTP requests
+- **Coverage Tests**: Comprehensive end-to-end functionality testing
+
+For detailed testing information, see [TESTING.md](TESTING.md).
+
+### Coverage Reports
+After running `npm run coverage`, open `coverage/index.html` in your browser to view the interactive coverage report.
+
 ## 📱 Mobile Optimization
 
 The customer interface is specifically optimized for mobile devices:
