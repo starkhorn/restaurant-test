@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Restaurant Management</title>
+    <link rel="stylesheet" href="/css/main.css">
+    <style>
+        .admin-nav {
+            background: var(--secondary-color);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        .admin-nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            list-style: none;
+        }
+        
+        .admin-nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            transition: background-color 0.3s;
+        }
+        
+        .admin-nav-links a:hover,
+        .admin-nav-links a.active {
+            background: var(--primary-color);
+        }
+        
+        .admin-section {
+            display: none;
+        }
+        
+        .admin-section.active {
+            display: block;
+        }
+        
+        .menu-item-admin {
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: white;
+        }
+        
+        .menu-item-admin img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: var(--border-radius);
+            margin-right: 1rem;
+        }
+        
+        .menu-item-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        
+        .menu-item-info {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+        
+        .menu-item-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .admin-nav-links {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .menu-item-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+            }
+            
+            .menu-item-info {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1>Restaurant Admin Panel</h1>
+            <p>Manage your menu, orders, and restaurant settings</p>
+        </div>
+    </header>
+
+    <nav class="admin-nav">
+        <div class="container">
+            <ul class="admin-nav-links">
+                <li><a href="#dashboard" class="nav-link active">Dashboard</a></li>
+                <li><a href="#menu" class="nav-link">Menu Management</a></li>
+                <li><a href="#categories" class="nav-link">Categories</a></li>
+                <li><a href="#orders" class="nav-link">Orders</a></li>
+                <li><a href="#tables" class="nav-link">Tables</a></li>
+                <li><a href="/">← Back to Home</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="admin-section active">
+            <h2>Dashboard</h2>
+            <div class="grid grid-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h3 id="totalItems">-</h3>
+                        <p>Menu Items</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h3 id="totalCategories">-</h3>
+                        <p>Categories</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h3 id="totalOrders">-</h3>
+                        <p>Total Orders</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h3 id="activeOrders">-</h3>
+                        <p>Active Orders</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Recent Orders</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="recentOrders">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Quick Actions</h3>
+                    </div>
+                    <div class="card-body">
+                        <button class="btn btn-primary mb-2" onclick="showSection('menu')">Manage Menu</button>
+                        <button class="btn btn-warning mb-2" onclick="window.open('/kitchen', '_blank')">Open Kitchen Display</button>
+                        <button class="btn btn-success mb-2" onclick="window.open('/cashier', '_blank')">Open Cashier</button>
+                        <button class="btn btn-secondary mb-2" onclick="generateAllQRCodes()">Generate All QR Codes</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Menu Management Section -->
+        <section id="menu" class="admin-section">
+            <div class="flex flex-between align-center mb-3">
+                <h2>Menu Management</h2>
+                <button class="btn btn-primary" onclick="showAddItemForm()">Add New Item</button>
+            </div>
+
+            <div id="menuItems">
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Categories Section -->
+        <section id="categories" class="admin-section">
+            <div class="flex flex-between align-center mb-3">
+                <h2>Category Management</h2>
+                <button class="btn btn-primary" onclick="showAddCategoryForm()">Add New Category</button>
+            </div>
+
+            <div id="categoriesList">
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Orders Section -->
+        <section id="orders" class="admin-section">
+            <h2>Order Management</h2>
+            <div class="mb-3">
+                <label class="form-label">Filter by Status:</label>
+                <select id="orderStatusFilter" class="form-select" style="width: 200px; display: inline-block;">
+                    <option value="">All Orders</option>
+                    <option value="queued">Queued</option>
+                    <option value="cooking">Cooking</option>
+                    <option value="ready">Ready to Serve</option>
+                </select>
+            </div>
+
+            <div id="ordersList">
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tables Section -->
+        <section id="tables" class="admin-section">
+            <h2>Table Management</h2>
+            <div class="grid grid-4" id="tablesList">
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Add/Edit Item Modal -->
+    <div id="itemModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="itemModalTitle">Add Menu Item</h3>
+                <button class="close-btn" onclick="closeModal('itemModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="itemForm">
+                    <input type="hidden" id="itemId">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Name (English)</label>
+                            <input type="text" id="itemNameEn" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Name (Thai)</label>
+                            <input type="text" id="itemNameTh" class="form-input" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea id="itemDescription" class="form-textarea" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Price (฿)</label>
+                            <input type="number" id="itemPrice" class="form-input" min="0" step="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Category</label>
+                            <select id="itemCategory" class="form-select" required>
+                                <!-- Categories will be loaded here -->
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Image URL</label>
+                            <input type="url" id="itemImage" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <select id="itemStatus" class="form-select">
+                                <option value="available">Available</option>
+                                <option value="sold-out">Temporarily Sold Out</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('itemModal')">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveItem()">Save Item</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Category Modal -->
+    <div id="categoryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Category</h3>
+                <button class="close-btn" onclick="closeModal('categoryModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="categoryForm">
+                    <div class="form-group">
+                        <label class="form-label">Name (English)</label>
+                        <input type="text" id="categoryNameEn" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Name (Thai)</label>
+                        <input type="text" id="categoryNameTh" class="form-input" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('categoryModal')">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveCategory()">Save Category</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let menu = null;
+        let orders = [];
+
+        // Navigation
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.admin-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active class from all nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Add active class to clicked nav link
+            document.querySelector(`a[href="#${sectionId}"]`).classList.add('active');
+            
+            // Load section data
+            loadSectionData(sectionId);
+        }
+
+        // Load data for specific section
+        async function loadSectionData(sectionId) {
+            switch(sectionId) {
+                case 'dashboard':
+                    await loadDashboard();
+                    break;
+                case 'menu':
+                    await loadMenuItems();
+                    break;
+                case 'categories':
+                    await loadCategories();
+                    break;
+                case 'orders':
+                    await loadOrders();
+                    break;
+                case 'tables':
+                    await loadTables();
+                    break;
+            }
+        }
+
+        // Load dashboard data
+        async function loadDashboard() {
+            try {
+                const [menuResponse, ordersResponse] = await Promise.all([
+                    fetch('/api/menu'),
+                    fetch('/api/orders')
+                ]);
+                
+                menu = await menuResponse.json();
+                orders = await ordersResponse.json();
+                
+                // Update statistics
+                document.getElementById('totalItems').textContent = menu.items.length;
+                document.getElementById('totalCategories').textContent = menu.categories.length;
+                document.getElementById('totalOrders').textContent = orders.length;
+                
+                const activeOrdersCount = orders.filter(order => 
+                    order.items.some(item => item.status !== 'ready')
+                ).length;
+                document.getElementById('activeOrders').textContent = activeOrdersCount;
+                
+                // Show recent orders
+                const recentOrders = orders.slice(-5).reverse();
+                const recentOrdersContainer = document.getElementById('recentOrders');
+                
+                if (recentOrders.length === 0) {
+                    recentOrdersContainer.innerHTML = '<p class="text-light">No orders yet</p>';
+                } else {
+                    recentOrdersContainer.innerHTML = recentOrders.map(order => `
+                        <div class="order-item">
+                            <div>
+                                <strong>Table ${order.tableNumber}</strong>
+                                <div class="text-light">${order.items.length} items - ฿${order.total}</div>
+                            </div>
+                            <div class="text-light">
+                                ${new Date(order.timestamp).toLocaleString()}
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+
+        // Load menu items
+        async function loadMenuItems() {
+            try {
+                const response = await fetch('/api/admin/menu');
+                menu = await response.json();
+                
+                const container = document.getElementById('menuItems');
+                
+                if (menu.items.length === 0) {
+                    container.innerHTML = '<p class="text-light">No menu items yet. Add your first item!</p>';
+                    return;
+                }
+                
+                container.innerHTML = menu.items.map(item => {
+                    const category = menu.categories.find(c => c.id === item.categoryId);
+                    return `
+                        <div class="menu-item-admin">
+                            <div class="menu-item-header">
+                                <div class="menu-item-info">
+                                    ${item.image ? `<img src="${item.image}" alt="${item.nameEn}">` : ''}
+                                    <div>
+                                        <h4>${item.nameEn} / ${item.nameTh}</h4>
+                                        <p class="text-light">${item.description}</p>
+                                        <p><strong>฿${item.price}</strong> | Category: ${category ? category.nameEn : 'Unknown'}</p>
+                                        <span class="status-badge status-${item.status}">${item.status}</span>
+                                    </div>
+                                </div>
+                                <div class="menu-item-actions">
+                                    <button class="btn btn-secondary" onclick="editItem(${item.id})">Edit</button>
+                                    <button class="btn ${item.status === 'available' ? 'btn-warning' : 'btn-success'}" 
+                                            onclick="toggleItemStatus(${item.id})">
+                                        ${item.status === 'available' ? 'Mark Sold Out' : 'Mark Available'}
+                                    </button>
+                                    <button class="btn btn-danger" onclick="deleteItem(${item.id})">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading menu items:', error);
+            }
+        }
+
+        // Load categories
+        async function loadCategories() {
+            try {
+                const response = await fetch('/api/admin/menu');
+                menu = await response.json();
+                
+                const container = document.getElementById('categoriesList');
+                
+                container.innerHTML = menu.categories.map(category => `
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="flex flex-between align-center">
+                                <div>
+                                    <h4>${category.nameEn} / ${category.nameTh}</h4>
+                                    <p class="text-light">${menu.items.filter(item => item.categoryId === category.id).length} items</p>
+                                </div>
+                                <div>
+                                    <button class="btn btn-danger" onclick="deleteCategory(${category.id})">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
+        }
+
+        // Load orders
+        async function loadOrders() {
+            try {
+                const response = await fetch('/api/orders');
+                orders = await response.json();
+                
+                const container = document.getElementById('ordersList');
+                
+                if (orders.length === 0) {
+                    container.innerHTML = '<p class="text-light">No orders yet</p>';
+                    return;
+                }
+                
+                const filteredOrders = filterOrders(orders);
+                
+                container.innerHTML = filteredOrders.map(order => `
+                    <div class="order-ticket">
+                        <div class="order-header">
+                            <div>Order #${order.id} - Table ${order.tableNumber}</div>
+                            <div>${new Date(order.timestamp).toLocaleString()}</div>
+                        </div>
+                        <div class="order-content">
+                            ${order.items.map(item => `
+                                <div class="order-item">
+                                    <div>
+                                        <strong>${item.name}</strong>
+                                        <div class="text-light">${item.quantity}x ฿${item.price}</div>
+                                        ${item.specialRequests ? `<div class="text-light"><small>Note: ${item.specialRequests}</small></div>` : ''}
+                                    </div>
+                                    <div class="status-badge status-${item.status}">${item.status}</div>
+                                </div>
+                            `).join('')}
+                            <div class="mt-2 text-right">
+                                <strong>Total: ฿${order.total}</strong>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading orders:', error);
+            }
+        }
+
+        // Filter orders by status
+        function filterOrders(orders) {
+            const filter = document.getElementById('orderStatusFilter').value;
+            if (!filter) return orders.reverse();
+            
+            return orders.filter(order => 
+                order.items.some(item => item.status === filter)
+            ).reverse();
+        }
+
+        // Load tables
+        async function loadTables() {
+            const container = document.getElementById('tablesList');
+            
+            // Generate table cards for tables 1-20
+            const tableCards = [];
+            for (let i = 1; i <= 20; i++) {
+                tableCards.push(`
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h3>Table ${i}</h3>
+                            <button class="btn btn-primary mb-2" onclick="generateTableQR(${i})">Generate QR</button>
+                            <button class="btn btn-secondary" onclick="viewTableOrders(${i})">View Orders</button>
+                        </div>
+                    </div>
+                `);
+            }
+            
+            container.innerHTML = tableCards.join('');
+        }
+
+        // Generate QR code for table
+        async function generateTableQR(tableNumber) {
+            try {
+                const response = await fetch(`/api/qr/${tableNumber}`);
+                const data = await response.json();
+                
+                // Open QR code in new window for printing
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(`
+                    <html>
+                        <head>
+                            <title>Table ${tableNumber} QR Code</title>
+                            <style>
+                                body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+                                img { max-width: 300px; }
+                                h1 { color: #ff6b35; }
+                            </style>
+                        </head>
+                        <body>
+                            <h1>Table ${tableNumber}</h1>
+                            <p>Scan to view menu and place your order</p>
+                            <img src="${data.qrCode}" alt="QR Code">
+                            <p><strong>Restaurant Menu & Order System</strong></p>
+                        </body>
+                    </html>
+                `);
+                printWindow.document.close();
+            } catch (error) {
+                console.error('Error generating QR code:', error);
+                alert('Failed to generate QR code');
+            }
+        }
+
+        // View orders for specific table
+        function viewTableOrders(tableNumber) {
+            showSection('orders');
+            // TODO: Filter orders by table number
+        }
+
+        // Generate all QR codes
+        async function generateAllQRCodes() {
+            if (confirm('This will open 20 new windows with QR codes for all tables. Continue?')) {
+                for (let i = 1; i <= 20; i++) {
+                    setTimeout(() => generateTableQR(i), i * 100); // Delay to prevent browser blocking
+                }
+            }
+        }
+
+        // Modal functions
+        function showAddItemForm() {
+            document.getElementById('itemModalTitle').textContent = 'Add Menu Item';
+            document.getElementById('itemForm').reset();
+            document.getElementById('itemId').value = '';
+            loadCategoryOptions();
+            document.getElementById('itemModal').classList.add('show');
+        }
+
+        function editItem(itemId) {
+            const item = menu.items.find(i => i.id === itemId);
+            if (!item) return;
+            
+            document.getElementById('itemModalTitle').textContent = 'Edit Menu Item';
+            document.getElementById('itemId').value = item.id;
+            document.getElementById('itemNameEn').value = item.nameEn;
+            document.getElementById('itemNameTh').value = item.nameTh;
+            document.getElementById('itemDescription').value = item.description;
+            document.getElementById('itemPrice').value = item.price;
+            document.getElementById('itemCategory').value = item.categoryId;
+            document.getElementById('itemImage').value = item.image || '';
+            document.getElementById('itemStatus').value = item.status;
+            
+            loadCategoryOptions();
+            document.getElementById('itemModal').classList.add('show');
+        }
+
+        function loadCategoryOptions() {
+            const select = document.getElementById('itemCategory');
+            select.innerHTML = menu.categories.map(category => 
+                `<option value="${category.id}">${category.nameEn}</option>`
+            ).join('');
+        }
+
+        async function saveItem() {
+            const itemId = document.getElementById('itemId').value;
+            const isEdit = !!itemId;
+            
+            const itemData = {
+                nameEn: document.getElementById('itemNameEn').value,
+                nameTh: document.getElementById('itemNameTh').value,
+                description: document.getElementById('itemDescription').value,
+                price: parseInt(document.getElementById('itemPrice').value),
+                categoryId: parseInt(document.getElementById('itemCategory').value),
+                image: document.getElementById('itemImage').value,
+                status: document.getElementById('itemStatus').value
+            };
+            
+            try {
+                const url = isEdit ? `/api/admin/menu/items/${itemId}` : '/api/admin/menu/items';
+                const method = isEdit ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(itemData)
+                });
+                
+                if (response.ok) {
+                    closeModal('itemModal');
+                    await loadMenuItems();
+                    alert(isEdit ? 'Item updated successfully' : 'Item added successfully');
+                } else {
+                    throw new Error('Failed to save item');
+                }
+            } catch (error) {
+                console.error('Error saving item:', error);
+                alert('Failed to save item');
+            }
+        }
+
+        async function toggleItemStatus(itemId) {
+            const item = menu.items.find(i => i.id === itemId);
+            const newStatus = item.status === 'available' ? 'sold-out' : 'available';
+            
+            try {
+                const response = await fetch(`/api/admin/menu/items/${itemId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status: newStatus })
+                });
+                
+                if (response.ok) {
+                    await loadMenuItems();
+                } else {
+                    throw new Error('Failed to update status');
+                }
+            } catch (error) {
+                console.error('Error updating status:', error);
+                alert('Failed to update item status');
+            }
+        }
+
+        async function deleteItem(itemId) {
+            if (!confirm('Are you sure you want to delete this item?')) return;
+            
+            try {
+                const response = await fetch(`/api/admin/menu/items/${itemId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    await loadMenuItems();
+                    alert('Item deleted successfully');
+                } else {
+                    throw new Error('Failed to delete item');
+                }
+            } catch (error) {
+                console.error('Error deleting item:', error);
+                alert('Failed to delete item');
+            }
+        }
+
+        function showAddCategoryForm() {
+            document.getElementById('categoryForm').reset();
+            document.getElementById('categoryModal').classList.add('show');
+        }
+
+        async function saveCategory() {
+            const categoryData = {
+                nameEn: document.getElementById('categoryNameEn').value,
+                nameTh: document.getElementById('categoryNameTh').value,
+                name: document.getElementById('categoryNameEn').value // For backward compatibility
+            };
+            
+            try {
+                const response = await fetch('/api/admin/menu/categories', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(categoryData)
+                });
+                
+                if (response.ok) {
+                    closeModal('categoryModal');
+                    await loadCategories();
+                    alert('Category added successfully');
+                } else {
+                    throw new Error('Failed to save category');
+                }
+            } catch (error) {
+                console.error('Error saving category:', error);
+                alert('Failed to save category');
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const sectionId = link.getAttribute('href').substring(1);
+                    showSection(sectionId);
+                });
+            });
+            
+            // Order status filter
+            document.getElementById('orderStatusFilter').addEventListener('change', () => {
+                loadOrders();
+            });
+            
+            // Modal close on outside click
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.classList.remove('show');
+                    }
+                });
+            });
+            
+            // Load initial data
+            loadDashboard();
+        });
+    </script>
+</body>
+</html>

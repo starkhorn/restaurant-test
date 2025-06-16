@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cashier System - Restaurant</title>
+    <link rel="stylesheet" href="/css/main.css">
+    <style>
+        .cashier-header {
+            background: linear-gradient(135deg, var(--accent-color), #2ecc71);
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+        }
+        
+        .search-section {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+        
+        .search-input {
+            font-size: 1.5rem;
+            padding: 1rem;
+            text-align: center;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+            display: block;
+        }
+        
+        .bill-container {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 2rem;
+            align-items: start;
+        }
+        
+        .order-history {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        
+        .bill-summary {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            position: sticky;
+            top: 20px;
+        }
+        
+        .bill-header {
+            background: var(--accent-color);
+            color: white;
+            padding: 1rem 1.5rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .order-list {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .order-entry {
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 1.5rem;
+            transition: background-color 0.3s;
+        }
+        
+        .order-entry:hover {
+            background-color: var(--light-bg);
+        }
+        
+        .order-entry:last-child {
+            border-bottom: none;
+        }
+        
+        .order-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .order-id {
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+        
+        .order-time {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        
+        .order-items-preview {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        
+        .total-amount {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            text-align: right;
+            margin-top: 0.5rem;
+        }
+        
+        .bill-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .bill-section h3 {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+        
+        .bill-item {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .bill-item:last-child {
+            border-bottom: none;
+        }
+        
+        .bill-item-info {
+            flex: 1;
+        }
+        
+        .bill-item-name {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+        
+        .bill-item-details {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+        
+        .bill-item-price {
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+        
+        .bill-total {
+            background: var(--light-bg);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .grand-total {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            border-top: 2px solid var(--border-color);
+            padding-top: 0.5rem;
+        }
+        
+        .payment-section {
+            margin-top: 2rem;
+        }
+        
+        .payment-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .no-table-selected {
+            text-align: center;
+            color: var(--text-light);
+            padding: 4rem 2rem;
+        }
+        
+        .table-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .status-active {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-paid {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        @media (max-width: 768px) {
+            .bill-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .bill-summary {
+                position: static;
+            }
+            
+            .payment-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="cashier-header">
+        <div class="container">
+            <h1>💰 Cashier System</h1>
+            <p>Process payments and manage table bills</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Table Search Section -->
+        <div class="search-section">
+            <h2 class="text-center mb-3">Search Table Orders</h2>
+            <input 
+                type="number" 
+                id="tableSearch" 
+                class="search-input" 
+                placeholder="Enter Table Number"
+                min="1" 
+                max="20"
+                autocomplete="off"
+            >
+            <div class="text-center mt-2">
+                <button id="searchBtn" class="btn btn-primary">Search Table</button>
+                <button id="clearBtn" class="btn btn-secondary">Clear</button>
+            </div>
+        </div>
+
+        <!-- Bill Display Section -->
+        <div id="billSection" class="hidden">
+            <div class="bill-container">
+                <!-- Order History -->
+                <div class="order-history">
+                    <div class="bill-header">
+                        Table <span id="displayTableNumber">-</span> Order History
+                    </div>
+                    <div class="order-list" id="orderList">
+                        <!-- Orders will be displayed here -->
+                    </div>
+                </div>
+
+                <!-- Bill Summary -->
+                <div class="bill-summary">
+                    <div class="bill-section">
+                        <h3>Bill Summary</h3>
+                        <div id="billItems">
+                            <!-- Bill items will be displayed here -->
+                        </div>
+                    </div>
+
+                    <div class="bill-total">
+                        <div class="total-row">
+                            <span>Subtotal:</span>
+                            <span id="subtotal">฿0</span>
+                        </div>
+                        <div class="total-row">
+                            <span>Tax (7%):</span>
+                            <span id="tax">฿0</span>
+                        </div>
+                        <div class="total-row">
+                            <span>Service Charge (10%):</span>
+                            <span id="serviceCharge">฿0</span>
+                        </div>
+                        <div class="total-row grand-total">
+                            <span>Grand Total:</span>
+                            <span id="grandTotal">฿0</span>
+                        </div>
+                    </div>
+
+                    <div class="payment-section">
+                        <div class="payment-buttons">
+                            <button id="processPayment" class="btn btn-success">Process Payment</button>
+                            <button id="printBill" class="btn btn-secondary">Print Bill</button>
+                        </div>
+                        <button id="closeTable" class="btn btn-warning mt-2" style="width: 100%;">Close Table</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- No Table Selected State -->
+        <div id="noTableState" class="no-table-selected">
+            <h2>👆 Enter a table number above to view orders</h2>
+            <p>Search for any table from 1 to 20 to see their order history and process payment</p>
+        </div>
+    </main>
+
+    <!-- Payment Confirmation Modal -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirm Payment</h3>
+                <button class="close-btn" onclick="closeModal('paymentModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <h2>Table <span id="paymentTableNumber">-</span></h2>
+                    <h3 class="text-primary">Total: ฿<span id="paymentTotal">0</span></h3>
+                    <p class="mt-2">Confirm payment received from customer?</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('paymentModal')">Cancel</button>
+                <button class="btn btn-success" onclick="confirmPayment()">Confirm Payment</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTableNumber = null;
+        let currentTableOrders = [];
+
+        // Initialize cashier system
+        function initCashier() {
+            setupEventListeners();
+            
+            // Auto-focus on table search input
+            document.getElementById('tableSearch').focus();
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Table search
+            document.getElementById('searchBtn').addEventListener('click', searchTable);
+            document.getElementById('clearBtn').addEventListener('click', clearSearch);
+            
+            // Enter key on search input
+            document.getElementById('tableSearch').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    searchTable();
+                }
+            });
+
+            // Payment buttons
+            document.getElementById('processPayment').addEventListener('click', showPaymentModal);
+            document.getElementById('printBill').addEventListener('click', printBill);
+            document.getElementById('closeTable').addEventListener('click', closeTable);
+
+            // Modal close on outside click
+            document.getElementById('paymentModal').addEventListener('click', (e) => {
+                if (e.target.id === 'paymentModal') {
+                    closeModal('paymentModal');
+                }
+            });
+        }
+
+        // Search for table orders
+        async function searchTable() {
+            const tableNumber = document.getElementById('tableSearch').value;
+            
+            if (!tableNumber || tableNumber < 1 || tableNumber > 20) {
+                alert('Please enter a valid table number (1-20)');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/orders/table/${tableNumber}`);
+                const orders = await response.json();
+
+                currentTableNumber = parseInt(tableNumber);
+                currentTableOrders = orders;
+
+                if (orders.length === 0) {
+                    showNoOrdersMessage();
+                } else {
+                    displayTableOrders();
+                }
+
+                // Show bill section and hide no table state
+                document.getElementById('billSection').classList.remove('hidden');
+                document.getElementById('noTableState').classList.add('hidden');
+
+            } catch (error) {
+                console.error('Error searching table orders:', error);
+                alert('Failed to load table orders');
+            }
+        }
+
+        // Clear search and reset view
+        function clearSearch() {
+            document.getElementById('tableSearch').value = '';
+            document.getElementById('billSection').classList.add('hidden');
+            document.getElementById('noTableState').classList.remove('hidden');
+            
+            currentTableNumber = null;
+            currentTableOrders = [];
+            
+            // Focus back on search input
+            document.getElementById('tableSearch').focus();
+        }
+
+        // Display table orders
+        function displayTableOrders() {
+            document.getElementById('displayTableNumber').textContent = currentTableNumber;
+            
+            // Display order history
+            const orderList = document.getElementById('orderList');
+            orderList.innerHTML = currentTableOrders.map(order => {
+                const itemsSummary = order.items.slice(0, 3).map(item => 
+                    `${item.quantity}x ${item.name}`
+                ).join(', ');
+                
+                const moreItems = order.items.length > 3 ? ` +${order.items.length - 3} more` : '';
+
+                return `
+                    <div class="order-entry">
+                        <div class="order-meta">
+                            <span class="order-id">Order #${order.id}</span>
+                            <span class="order-time">${new Date(order.timestamp).toLocaleString()}</span>
+                        </div>
+                        <div class="order-items-preview">
+                            ${itemsSummary}${moreItems}
+                        </div>
+                        <div class="total-amount">฿${order.total}</div>
+                    </div>
+                `;
+            }).join('');
+
+            // Calculate and display bill summary
+            displayBillSummary();
+        }
+
+        // Display bill summary with totals
+        function displayBillSummary() {
+            const billItems = document.getElementById('billItems');
+            
+            // Combine all items from all orders
+            const allItems = {};
+            
+            currentTableOrders.forEach(order => {
+                order.items.forEach(item => {
+                    const key = `${item.name}_${item.price}_${item.specialRequests || ''}`;
+                    
+                    if (allItems[key]) {
+                        allItems[key].quantity += item.quantity;
+                        allItems[key].total += item.price * item.quantity;
+                    } else {
+                        allItems[key] = {
+                            name: item.name,
+                            price: item.price,
+                            quantity: item.quantity,
+                            total: item.price * item.quantity,
+                            specialRequests: item.specialRequests
+                        };
+                    }
+                });
+            });
+
+            // Display consolidated items
+            billItems.innerHTML = Object.values(allItems).map(item => `
+                <div class="bill-item">
+                    <div class="bill-item-info">
+                        <div class="bill-item-name">${item.name}</div>
+                        <div class="bill-item-details">
+                            ${item.quantity}x ฿${item.price}
+                            ${item.specialRequests ? `<br><em>Note: ${item.specialRequests}</em>` : ''}
+                        </div>
+                    </div>
+                    <div class="bill-item-price">฿${item.total}</div>
+                </div>
+            `).join('');
+
+            // Calculate totals
+            const subtotal = currentTableOrders.reduce((sum, order) => sum + order.total, 0);
+            const tax = Math.round(subtotal * 0.07);
+            const serviceCharge = Math.round(subtotal * 0.10);
+            const grandTotal = subtotal + tax + serviceCharge;
+
+            // Update total displays
+            document.getElementById('subtotal').textContent = `฿${subtotal}`;
+            document.getElementById('tax').textContent = `฿${tax}`;
+            document.getElementById('serviceCharge').textContent = `฿${serviceCharge}`;
+            document.getElementById('grandTotal').textContent = `฿${grandTotal}`;
+        }
+
+        // Show no orders message
+        function showNoOrdersMessage() {
+            const orderList = document.getElementById('orderList');
+            orderList.innerHTML = `
+                <div class="no-table-selected">
+                    <h3>No orders found for Table ${currentTableNumber}</h3>
+                    <p>This table has not placed any orders yet.</p>
+                </div>
+            `;
+
+            // Clear bill summary
+            document.getElementById('billItems').innerHTML = '<p class="text-light">No items to display</p>';
+            document.getElementById('subtotal').textContent = '฿0';
+            document.getElementById('tax').textContent = '฿0';
+            document.getElementById('serviceCharge').textContent = '฿0';
+            document.getElementById('grandTotal').textContent = '฿0';
+        }
+
+        // Show payment confirmation modal
+        function showPaymentModal() {
+            if (currentTableOrders.length === 0) {
+                alert('No orders to process payment for');
+                return;
+            }
+
+            const subtotal = currentTableOrders.reduce((sum, order) => sum + order.total, 0);
+            const tax = Math.round(subtotal * 0.07);
+            const serviceCharge = Math.round(subtotal * 0.10);
+            const grandTotal = subtotal + tax + serviceCharge;
+
+            document.getElementById('paymentTableNumber').textContent = currentTableNumber;
+            document.getElementById('paymentTotal').textContent = grandTotal;
+            document.getElementById('paymentModal').classList.add('show');
+        }
+
+        // Confirm payment processing
+        async function confirmPayment() {
+            try {
+                // In a real system, you would mark orders as paid in the database
+                // For now, we'll just show a success message
+                
+                closeModal('paymentModal');
+                
+                alert(`Payment of ฿${document.getElementById('paymentTotal').textContent} confirmed for Table ${currentTableNumber}!`);
+                
+                // Clear the table after payment
+                clearSearch();
+                
+            } catch (error) {
+                console.error('Error processing payment:', error);
+                alert('Failed to process payment');
+            }
+        }
+
+        // Print bill
+        function printBill() {
+            if (currentTableOrders.length === 0) {
+                alert('No orders to print');
+                return;
+            }
+
+            const subtotal = currentTableOrders.reduce((sum, order) => sum + order.total, 0);
+            const tax = Math.round(subtotal * 0.07);
+            const serviceCharge = Math.round(subtotal * 0.10);
+            const grandTotal = subtotal + tax + serviceCharge;
+
+            // Combine all items
+            const allItems = {};
+            currentTableOrders.forEach(order => {
+                order.items.forEach(item => {
+                    const key = `${item.name}_${item.price}_${item.specialRequests || ''}`;
+                    if (allItems[key]) {
+                        allItems[key].quantity += item.quantity;
+                        allItems[key].total += item.price * item.quantity;
+                    } else {
+                        allItems[key] = {
+                            name: item.name,
+                            price: item.price,
+                            quantity: item.quantity,
+                            total: item.price * item.quantity,
+                            specialRequests: item.specialRequests
+                        };
+                    }
+                });
+            });
+
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>Bill - Table ${currentTableNumber}</title>
+                        <style>
+                            body { font-family: monospace; max-width: 400px; margin: 0 auto; padding: 20px; }
+                            .header { text-align: center; margin-bottom: 20px; }
+                            .line { border-bottom: 1px dashed #000; margin: 10px 0; }
+                            .item { display: flex; justify-content: space-between; margin: 5px 0; }
+                            .total { font-weight: bold; margin-top: 10px; }
+                            .grand-total { font-size: 1.2em; border-top: 2px solid #000; padding-top: 10px; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <h2>RESTAURANT BILL</h2>
+                            <p>Table ${currentTableNumber}</p>
+                            <p>${new Date().toLocaleString()}</p>
+                        </div>
+                        
+                        <div class="line"></div>
+                        
+                        ${Object.values(allItems).map(item => `
+                            <div class="item">
+                                <span>${item.name} (${item.quantity}x)</span>
+                                <span>฿${item.total}</span>
+                            </div>
+                            ${item.specialRequests ? `<div style="font-size: 0.8em; color: #666;">Note: ${item.specialRequests}</div>` : ''}
+                        `).join('')}
+                        
+                        <div class="line"></div>
+                        
+                        <div class="item">
+                            <span>Subtotal:</span>
+                            <span>฿${subtotal}</span>
+                        </div>
+                        <div class="item">
+                            <span>Tax (7%):</span>
+                            <span>฿${tax}</span>
+                        </div>
+                        <div class="item">
+                            <span>Service Charge (10%):</span>
+                            <span>฿${serviceCharge}</span>
+                        </div>
+                        
+                        <div class="item grand-total">
+                            <span>TOTAL:</span>
+                            <span>฿${grandTotal}</span>
+                        </div>
+                        
+                        <div class="line"></div>
+                        <div class="header">
+                            <p>Thank you for dining with us!</p>
+                        </div>
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        // Close table (clear all orders)
+        function closeTable() {
+            if (currentTableOrders.length === 0) {
+                alert('No active orders for this table');
+                return;
+            }
+
+            if (confirm(`Are you sure you want to close Table ${currentTableNumber}? This action cannot be undone.`)) {
+                // In a real system, you would mark the table as closed in the database
+                alert(`Table ${currentTableNumber} has been closed successfully!`);
+                clearSearch();
+            }
+        }
+
+        // Close modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initCashier);
+    </script>
+</body>
+</html>
