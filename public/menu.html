@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Restaurant Menu - Table <span id="headerTableNumber"></span></title>
+    <title>Restaurant Menu</title>
     <link rel="stylesheet" href="/css/main.css">
     <style>
         /* Mobile-specific optimizations */
@@ -234,7 +234,6 @@
 
             // Update UI with table number
             document.getElementById('tableNumber').textContent = tableNumber;
-            document.getElementById('headerTableNumber').textContent = tableNumber;
             document.title = `Restaurant Menu - Table ${tableNumber}`;
 
             // Initialize Socket.IO
