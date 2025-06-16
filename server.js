@@ -338,4 +338,10 @@ async function startServer() {
   });
 }
 
-startServer().catch(console.error);
+// Export for testing
+module.exports = { app, server, readData, writeData, initializeData };
+
+// Start server only if this file is run directly
+if (require.main === module) {
+  startServer().catch(console.error);
+}

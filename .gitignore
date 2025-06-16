@@ -94,6 +94,7 @@ logs
 
 # Runtime data
 data/*.json.backup
+test-data/
 
 # Editor directories and files
 .vscode/
